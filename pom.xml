@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>in.kmit</groupId>
-  <artifactId>MyJavaProject</artfactId>
+  <artifactId>MyJavaProject</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <name>MyJavaProject</name>
@@ -17,7 +17,7 @@
   </properties>
 
   <dependencyManagement>
-  
+  	<dependencies>
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -40,6 +40,12 @@
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
+	<dependency>
+	    <groupId>com.mysql</groupId>
+	    <artifactId>mysql-connector-j</artifactId>
+	    <version>8.0.33</version>
+	</dependency>
   </dependencies>
 
   <build>
