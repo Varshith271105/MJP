@@ -1,0 +1,193 @@
+🚀 Smart Assessment Hub Maven, Git & Docker Cheat Sheet
+
+=========================================================
+1. Maven Web Application Development
+=========================================================
+
+# Clone repository and fix POM.xml errors
+git clone https://github.com/savram674/Smart-Assessment-Hub.git
+cd Smart-Assessment-Hub
+mvn clean install  # Fix errors in POM.xml and build project
+
+# Add Servlet API dependency
+<dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>4.0.1</version>
+    <scope>provided</scope>
+</dependency>
+
+# Add MySQL Connector/J dependency
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+
+# Package as WAR
+mvn clean package  # WAR created in target/Smart-Assessment-Hub.war
+
+# Deploy on Tomcat
+cp target/Smart-Assessment-Hub.war $TOMCAT_HOME/webapps/
+$TOMCAT_HOME/bin/startup.sh
+# Access in browser: http://localhost:8080/Smart-Assessment-Hub
+
+# Maven local repository path for dependencies
+~/.m2/repository/javax/servlet/javax.servlet-api/4.0.1/
+~/.m2/repository/mysql/mysql-connector-java/8.0.33/
+
+# Folder structure
+Smart-Assessment-Hub/
+├─ pom.xml
+├─ src/
+│  ├─ main/
+│  │  ├─ java/
+│  │  ├─ resources/
+│  │  └─ webapp/WEB-INF/web.xml
+│  └─ test/
+├─ target/Smart-Assessment-Hub.war
+
+=========================================================
+2. Git & GitHub Integration
+=========================================================
+
+# Configure Git
+git config --global user.name "Your Name"
+git config --global user.email "youremail@example.com"
+
+# Initialize repo and commit
+git init
+git add .
+git commit -m "Initial commit"
+
+# Commit example
+git add .
+git commit -m "Added automated grading module"
+
+# Check status
+git status
+
+# View commit history with author details
+git log --pretty=format:"%h - %an, %ad : %s"
+
+# Create & switch branch
+git checkout -b feedback-module
+
+# Merge branch & resolve conflicts
+git checkout main
+git merge feedback-module
+# Edit conflicting files, remove <<<<<<< markers, then
+git add .
+git commit -m "Resolved conflict and merged feedback-module"
+
+# Create patch file
+git format-patch -1 <commit-hash>
+git apply 0001-Commit-message.patch
+
+# Push branch to GitHub
+git checkout analytics-dashboard
+git push origin analytics-dashboard
+
+# Fork & pull request workflow
+# 1. Fork repo on GitHub
+# 2. Clone fork locally
+git clone https://github.com/yourusername/Spoon-Knife.git
+git checkout -b new-feature
+git add .
+git commit -m "Implemented new feature"
+git push origin new-feature
+# 3. Open Pull Request on GitHub
+
+# Check differences between local branch and remote main
+git fetch origin
+git diff origin/main
+
+=========================================================
+3. Docker for Smart Assessment Hub
+=========================================================
+
+# Check Docker version & images
+docker --version
+docker images
+
+# Pull and run hello-world
+docker pull hello-world
+docker run hello-world
+
+# Run Python image interactive
+docker run -it python:3.11 /bin/bash
+
+# Dockerfile for Smart Assessment Hub using Tomcat
+Dockerfile:
+FROM tomcat:10.1.44-jdk17
+RUN rm -rf /usr/local/tomcat/webapps/*
+COPY target/Smart-Assessment-Hub.war /usr/local/tomcat/webapps/Smart-Assessment-Hub.war
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
+
+# Build image & run container
+docker build -t smarthub-image .
+docker run -d --name smarthub-container -p 8080:8080 smarthub-image
+
+# List containers
+docker ps
+docker ps -a
+
+# Start & stop container
+docker stop smarthub-container
+docker start smarthub-container
+
+# Push image to Docker Hub
+docker login
+docker tag smarthub-image username/smarthub-image:latest
+docker push username/smarthub-image:latest
+
+# Inspect logs
+docker logs smarthub-container
+
+=========================================================
+4. Docker Compose with Tomcat & MySQL
+=========================================================
+
+docker-compose.yml:
+version: "3.9"
+services:
+  app:
+    image: username/smarthub-image:latest
+    container_name: smarthub-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: smarthub-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: smarthub
+      MYSQL_USER: smmuser
+      MYSQL_PASSWORD: smmpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+volumes:
+  mysql_data:
+
+# Bring containers up & confirm
+docker compose up -d
+docker compose ps
+
+# Access Tomcat in browser
+http://localhost:8080/Smart-Assessment-Hub
+
+# Connect MySQL container & create table
+docker exec -it smarthub-db mysql -u smmuser -p
+# Enter password: smmpassword
+USE smarthub;
+CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50), email VARCHAR(50), created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+SELECT * FROM users;
