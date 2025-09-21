@@ -1,0 +1,180 @@
+
+🚀 Software Engineering & DevOps Cheat Sheet
+
+=========================================================
+1. Software Requirement Specification (SRS)
+=========================================================
+Abstract (SMMA)
+- Lightweight social media web app (login, posts, like/comment, profile).
+- Scope: simple, scalable, secure, community-driven.
+
+Functional Requirements (5)
+1. User Authentication (login/register).
+2. Post feed (text/images).
+3. Like & Comment on posts.
+4. Profile management.
+5. View feed.
+
+Non-Functional Requirements (3)
+- Security (hash passwords, HTTPS).
+- Scalability (handle many users).
+- Usability (responsive UI).
+
+Users
+- Admin → manages system.
+- Registered User → posts, comments, profiles.
+- Guest → view limited content only.
+
+=========================================================
+2. Maven (Build Tool)
+=========================================================
+Lifecycle (important phases)
+- clean → removes old build (target/).
+- compile → compile Java code.
+- test → run tests.
+- package → build JAR/WAR.
+- install → install to local repo (~/.m2).
+- deploy → send to remote repo.
+
+JSTL Dependency
+<dependency>
+  <groupId>javax.servlet</groupId>
+  <artifactId>jstl</artifactId>
+  <version>1.2</version>
+</dependency>
+
+MongoDB Driver Dependency
+<dependency>
+  <groupId>org.mongodb</groupId>
+  <artifactId>mongodb-driver-sync</artifactId>
+  <version>5.1.0</version>
+</dependency>
+
+Build Directory
+<build>
+  <directory>build_output</directory>
+</build>
+
+Useful Commands
+- Build: mvn clean install
+- Dependency tree: mvn dependency:tree
+
+Deploy WAR to Tomcat
+cp target/SMMA.war $TOMCAT_HOME/webapps/
+Access: http://localhost:8080/SMMA
+
+=========================================================
+3. Git & GitHub
+=========================================================
+Basic Config
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+
+Staging & Undo
+git add file.jsp
+git reset file.jsp
+
+Commit
+git commit -m "Added feed.jsp for user posts"
+
+Logs & Details
+git log -p
+git show <commit_hash>
+
+Branching & Merging
+git checkout -b comment-feature
+git push origin comment-feature
+git checkout main
+git merge comment-feature
+
+Merge Conflict
+# Edit file → remove <<<<<<< markers
+git add file.jsp
+git commit -m "Resolved conflict"
+
+View Diffs
+git show HEAD
+git diff HEAD~1 HEAD
+
+Sync with Remote
+git fetch origin
+git pull origin main
+
+Undo & Fix
+git revert <commit_hash>
+git commit --amend -m "New msg"
+
+Compare Local vs Remote
+git fetch origin
+git diff HEAD origin/main
+
+Clone Project
+git clone https://github.com/savram674/SMMA.git
+
+=========================================================
+4. Docker
+=========================================================
+Dockerfile (Tomcat + WAR)
+FROM tomcat:10.1.44-jdk17
+COPY target/SMMA.war /usr/local/tomcat/webapps/
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
+
+Build & Run
+docker build -t smma-web .
+docker run -d -p 8080:8080 --name smma-container smma-web
+
+Inside Container
+docker exec -it smma-container bash
+ls /usr/local/tomcat/webapps/
+
+List
+docker images
+docker ps -a
+
+Ubuntu Example
+docker pull ubuntu:22.04
+docker run -it ubuntu:22.04 bash
+echo "Hello" > myfile.txt
+exit
+docker commit <container_id> ubuntu-with-file
+
+Pull & Tag
+docker pull nginx:latest
+docker tag nginx:latest my-nginx:v1
+
+=========================================================
+5. Docker Compose (Multi-container)
+=========================================================
+docker-compose.yml
+version: "3.9"
+services:
+  smma-web:
+    image: smma-web:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+    restart: always
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+volumes:
+  mongo_data:
+
+Commands
+docker-compose up -d
+docker-compose ps
+
+Insert & Retrieve MongoDB Data
+docker exec -it smma-mongo mongosh
+use smma
+db.posts.insertOne({user:"Alice",content:"Hello Compose!",likes:0})
+db.posts.find()
+exit
