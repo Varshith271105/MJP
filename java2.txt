@@ -1,0 +1,184 @@
+
+🚀 Maven, Git & Docker Cheat Sheet for Maven Java Project (MJP)
+
+=========================================================
+1. Maven Java Project Development
+=========================================================
+
+# Clone repository and build
+git clone https://github.com/savram674/MJP.git
+cd MJP
+mvn clean install
+
+# Add MySQL Connector dependency in pom.xml
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+</dependency>
+
+# Maven folder structure
+MJP/
+├─ pom.xml
+├─ src/
+│  ├─ main/java/
+│  ├─ main/resources/
+│  └─ test/java/
+│     └─ test/resources/
+└─ target/
+
+# Create executable JAR using maven-jar-plugin
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-jar-plugin</artifactId>
+  <version>3.3.0</version>
+  <configuration>
+    <archive>
+      <manifest>
+        <mainClass>com.example.MainClass</mainClass>
+      </manifest>
+    </archive>
+  </configuration>
+</plugin>
+
+# Run unit tests with Maven Surefire plugin
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <version>3.0.0-M9</version>
+</plugin>
+
+# target/ folder after mvn clean install
+target/
+├─ classes/
+├─ test-classes/
+├─ MJP-1.0-SNAPSHOT.jar
+├─ surefire-reports/
+└─ maven-archiver/
+
+=========================================================
+2. Git & GitHub Integration
+=========================================================
+
+# Initialize Git & connect to remote
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/username/MJP.git
+git push -u origin main
+
+# Fix last commit message (before push)
+git commit --amend -m "Corrected commit message"
+
+# .gitignore to exclude target/
+target/
+*.class
+*.log
+
+# View commits compact
+git log --oneline
+
+# Stash changes to switch branches
+git stash save "Work in progress"
+git checkout other-branch
+git stash pop
+
+# Feature branch, add files, merge
+git checkout -b gaming
+git add Game.java Player.java
+git commit -m "Added gaming feature files"
+git checkout main
+git merge gaming
+
+# Resolve merge conflicts
+# Edit conflicting file -> remove <<<<<<< markers
+git add Game.java
+git commit -m "Resolved merge conflict"
+
+# View last commit changes
+git show HEAD
+
+# Git pull vs fetch
+git fetch origin    # download only
+git pull origin main  # download + merge
+
+# Unstage file without losing edits
+git reset Calculator.java
+
+# Modify last commit message
+git commit --amend -m "Updated last commit message"
+
+=========================================================
+3. Docker for Maven JAR
+=========================================================
+
+# Dockerfile for OpenJDK + JAR
+Dockerfile:
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+COPY target/MJP-1.0-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
+
+# Build image & list images
+docker build -t mjp-app .
+docker images
+
+# Run container & see output
+docker run -d --name mjp-container -p 8080:8080 mjp-app
+docker logs mjp-container
+
+# Active & inactive containers
+docker ps       # running
+docker ps -a    # all
+
+# Stop & remove container
+docker stop mjp-container
+docker rm mjp-container
+
+# Pull Redis & run
+docker pull redis:7
+docker run -d --name my-redis -p 6379:6379 redis:7
+
+# Remove image
+docker rmi mjp-app
+docker images
+
+=========================================================
+4. Docker Compose for Maven Project + PostgreSQL
+=========================================================
+
+docker-compose.yml:
+version: "3.9"
+services:
+  app:
+    build: .
+    container_name: mjp-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: postgres:15
+    container_name: mjp-db
+    environment:
+      POSTGRES_USER: mjpuser
+      POSTGRES_PASSWORD: mjppassword
+      POSTGRES_DB: mjpdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
+
+# Bring services up & confirm
+docker compose up -d
+docker compose ps
+
+# View logs of app service
+docker compose logs app
